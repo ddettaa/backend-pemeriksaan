@@ -5,7 +5,6 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Api\JadwalController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Api\PasienController;
 use App\Http\Controllers\PemeriksaanController;
 use App\Http\Controllers\StatusHistoryController;
 use App\Http\Controllers\Api\EResepController;
@@ -24,8 +23,6 @@ Route::apiResource('e-resep', EResepController::class);
 Route::apiResource('e-resepdetail', DetailEResepController::class);
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/pasien', [PasienController::class, 'index']);
-
     // Test routes to check data
     Route::get('/test-data/{no_registrasi}', function ($no_registrasi) {
         $pasien = DB::table('pasien')->where('no_reg', $no_registrasi)->first();
@@ -87,6 +84,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/status/{noReg}/current', [StatusHistoryController::class, 'getCurrentStatus']);
     Route::get('/status/{noReg}/history', [StatusHistoryController::class, 'getStatusHistory']);
     Route::post('/status', [StatusHistoryController::class, 'addStatus']);
-
-    
 });

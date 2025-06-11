@@ -1,0 +1,91 @@
+name: Jadwal
+description: ''
+endpoints:
+  -
+    httpMethods:
+      - GET
+    uri: api/jadwal-dokter
+    metadata:
+      groupName: Jadwal
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Ambil daftar jadwal dokter beserta nama dokter.'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          [
+              {
+                  "id_jadwal": 1,
+                  "nama_dokter": "Dr. Smith",
+                  "hari": "Senin",
+                  "jam_mulai": "08:00",
+                  "jam_akhir": "16:00"
+              }
+          ]
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []
+  -
+    httpMethods:
+      - GET
+    uri: api/jadwal
+    metadata:
+      groupName: Jadwal
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Ambil daftar jadwal beserta nama perawat.'
+      description: ''
+      authenticated: false
+      custom: []
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses:
+      -
+        status: 200
+        content: |-
+          [
+              {
+                  "nama_perawat": "John Doe",
+                  "hari": "Senin",
+                  "jam": "08:00 - 16:00"
+              }
+          ]
+        headers: []
+        description: ''
+        custom: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+    custom: []

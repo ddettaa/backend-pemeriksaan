@@ -6,8 +6,30 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Jadwal;
 
+/**
+ * @OA\Info(title="SIMRS API", version="1.0")
+ */
 class JadwalController extends Controller
 {
+    /**
+     * @OA\Get(
+     *     path="/api/jadwal",
+     *     summary="Ambil daftar jadwal beserta nama perawat",
+     *     @OA\Response(response=200, description="Daftar jadwal")
+     * )
+     */
+    /**
+     * Ambil daftar jadwal beserta nama perawat.
+     *
+     * @group Jadwal
+     * @response 200 [
+     *     {
+     *         "nama_perawat": "John Doe",
+     *         "hari": "Senin",
+     *         "jam": "08:00 - 16:00"
+     *     }
+     * ]
+     */
     public function index()
     {
         // Ambil data jadwal beserta relasi perawat
@@ -21,6 +43,27 @@ class JadwalController extends Controller
 
         return response()->json($jadwals);
     }
+    /**
+     * @OA\Get(
+     *     path="/api/jadwal/dokter",
+     *     summary="Ambil daftar jadwal dokter beserta nama dokter",
+     *     @OA\Response(response=200, description="Daftar jadwal dokter")
+     * )
+     */
+    /**
+     * Ambil daftar jadwal dokter beserta nama dokter.
+     *
+     * @group Jadwal
+     * @response 200 [
+     *     {
+     *         "id_jadwal": 1,
+     *         "nama_dokter": "Dr. Smith",
+     *         "hari": "Senin",
+     *         "jam_mulai": "08:00",
+     *         "jam_akhir": "16:00"
+     *     }
+     * ]
+     */
     public function jadwalDokter()
 {
     $jadwalDokter = Jadwal::with('dokter')

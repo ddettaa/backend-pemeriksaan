@@ -6,10 +6,35 @@ use App\Http\Controllers\Controller;
 use App\Models\EResep;
 use Illuminate\Http\Request;
 
+/**
+ * @OA\Info(title="SIMRS API", version="1.0")
+ */
 class EResepController extends Controller
 {
     /**
-     * Tampilkan daftar resep dengan pagination
+     * @OA\Get(
+     *     path="/api/e-resep",
+     *     summary="Ambil daftar resep beserta detailnya",
+     *     @OA\Response(response=200, description="Daftar resep")
+     * )
+     */
+    /**
+     * Ambil daftar resep beserta detailnya.
+     *
+     * @group EResep
+     * @response 200 [
+     *     {
+     *         "id": 1,
+     *         "no_registrasi": "12345",
+     *         "details": [
+     *             {
+     *                 "id_obat": 1,
+     *                 "jumlah": 2,
+     *                 "aturan_pakai": "3x sehari"
+     *             }
+     *         ]
+     *     }
+     * ]
      */
     public function index()
     {
@@ -18,7 +43,30 @@ class EResepController extends Controller
     }
 
     /**
-     * Simpan resep baru
+     * @OA\Post(
+     *     path="/api/e-resep",
+     *     summary="Tambah resep baru",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="no_registrasi", type="string", example="12345")
+     *         )
+     *     ),
+     *     @OA\Response(response=201, description="Resep yang baru dibuat")
+     * )
+     */
+    /**
+     * Tambah resep baru.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     * @group EResep
+     * @bodyParam no_registrasi string required Nomor registrasi pasien. Example: 12345
+     * @response 201 {
+     *     "id": 1,
+     *     "no_registrasi": "12345",
+     *     "details": []
+     * }
      */
     public function store(Request $request)
     {
@@ -34,7 +82,30 @@ class EResepController extends Controller
     }
 
     /**
-     * Tampilkan satu resep beserta detailnya
+     * @OA\Get(
+     *     path="/api/e-resep/{e_resep}",
+     *     summary="Ambil satu resep beserta detailnya",
+     *     @OA\Parameter(name="e_resep", in="path", required=true, description="ID Resep"),
+     *     @OA\Response(response=200, description="Resep")
+     * )
+     */
+    /**
+     * Ambil satu resep beserta detailnya.
+     *
+     * @param \App\Models\EResep $e_resep
+     * @return \Illuminate\Http\JsonResponse
+     * @group EResep
+     * @response 200 {
+     *     "id": 1,
+     *     "no_registrasi": "12345",
+     *     "details": [
+     *         {
+     *             "id_obat": 1,
+     *             "jumlah": 2,
+     *             "aturan_pakai": "3x sehari"
+     *         }
+     *     ]
+     * }
      */
     public function show(EResep $e_resep)
     {
@@ -43,7 +114,32 @@ class EResepController extends Controller
     }
 
     /**
-     * Update data resep
+     * @OA\Put(
+     *     path="/api/e-resep/{e_resep}",
+     *     summary="Update data resep",
+     *     @OA\Parameter(name="e_resep", in="path", required=true, description="ID Resep"),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="no_registrasi", type="string", example="12345")
+     *         )
+     *     ),
+     *     @OA\Response(response=200, description="Resep yang sudah diupdate")
+     * )
+     */
+    /**
+     * Update data resep.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\EResep $e_resep
+     * @return \Illuminate\Http\JsonResponse
+     * @group EResep
+     * @bodyParam no_registrasi string Nomor registrasi pasien. Example: 12345
+     * @response 200 {
+     *     "id": 1,
+     *     "no_registrasi": "12345",
+     *     "details": []
+     * }
      */
     public function update(Request $request, EResep $e_resep)
     {
@@ -59,7 +155,20 @@ class EResepController extends Controller
     }
 
     /**
-     * Hapus resep
+     * @OA\Delete(
+     *     path="/api/e-resep/{e_resep}",
+     *     summary="Hapus resep tertentu",
+     *     @OA\Parameter(name="e_resep", in="path", required=true, description="ID Resep"),
+     *     @OA\Response(response=204, description="No Content")
+     * )
+     */
+    /**
+     * Hapus resep tertentu.
+     *
+     * @param \App\Models\EResep $e_resep
+     * @return \Illuminate\Http\JsonResponse
+     * @group EResep
+     * @response 204 {}
      */
     public function destroy(EResep $e_resep)
     {
