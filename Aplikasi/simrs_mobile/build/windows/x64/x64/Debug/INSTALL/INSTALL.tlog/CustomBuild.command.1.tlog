@@ -1,0 +1,10 @@
+^D:\SEMESTER 4\PROJECT\SIMRS-PEMERIKSAAN-MOBILE\SIMRS_MOBILE\SIMRS_MOBILE\BUILD\WINDOWS\X64\CMAKEFILES\C9E484B1E47C0A3D7020F072B45FBF3F\INSTALL_FORCE.RULE
+setlocal
+cd .
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

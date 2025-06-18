@@ -1,0 +1,28 @@
+^D:\SEMESTER 4\PROJECT\SIMRS-PEMERIKSAAN-MOBILE\SIMRS_MOBILE\SIMRS_MOBILE\BUILD\WINDOWS\X64\CMAKEFILES\DDB1FFC58EB4CAC50E4674E39BEB6244\FLUTTER_WINDOWS.DLL.RULE
+setlocal
+"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -E env "FLUTTER_ROOT=D:\DATA PENTING\flutter" "PROJECT_DIR=D:\Semester 4\PROJECT\SIMRS-PEMERIKSAAN-MOBILE\simrs_mobile\simrs_mobile" "FLUTTER_ROOT=D:\DATA PENTING\flutter" "FLUTTER_EPHEMERAL_DIR=D:\Semester 4\PROJECT\SIMRS-PEMERIKSAAN-MOBILE\simrs_mobile\simrs_mobile\windows\flutter\ephemeral" "PROJECT_DIR=D:\Semester 4\PROJECT\SIMRS-PEMERIKSAAN-MOBILE\simrs_mobile\simrs_mobile" "FLUTTER_TARGET=D:\Semester 4\PROJECT\SIMRS-PEMERIKSAAN-MOBILE\simrs_mobile\simrs_mobile\lib\main.dart" DART_OBFUSCATION=false TRACK_WIDGET_CREATION=true TREE_SHAKE_ICONS=false "PACKAGE_CONFIG=D:\Semester 4\PROJECT\SIMRS-PEMERIKSAAN-MOBILE\simrs_mobile\simrs_mobile\.dart_tool\package_config.json" "D:/DATA PENTING/flutter/packages/flutter_tools/bin/tool_backend.bat" windows-x64 Debug
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\SEMESTER 4\PROJECT\SIMRS-PEMERIKSAAN-MOBILE\SIMRS_MOBILE\SIMRS_MOBILE\BUILD\WINDOWS\X64\CMAKEFILES\A9152447BDC903F636CF81EA1A796330\FLUTTER_ASSEMBLE.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^D:\SEMESTER 4\PROJECT\SIMRS-PEMERIKSAAN-MOBILE\SIMRS_MOBILE\SIMRS_MOBILE\WINDOWS\FLUTTER\CMAKELISTS.TXT
+setlocal
+"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" "-SD:/Semester 4/PROJECT/SIMRS-PEMERIKSAAN-MOBILE/simrs_mobile/simrs_mobile/windows" "-BD:/Semester 4/PROJECT/SIMRS-PEMERIKSAAN-MOBILE/simrs_mobile/simrs_mobile/build/windows/x64" --check-stamp-file "D:/Semester 4/PROJECT/SIMRS-PEMERIKSAAN-MOBILE/simrs_mobile/simrs_mobile/build/windows/x64/flutter/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

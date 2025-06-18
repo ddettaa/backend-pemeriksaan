@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="D:\Semester 4\PROJECT\SIMRS-PEMERIKSAAN-MOBILE\simrs_mobile\simrs_mobile\build\windows\x64\CMakeFiles\c9e484b1e47c0a3d7020f072b45fbf3f\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{237BDA84-D8F0-3CF3-8E6E-2CD3309AC531}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
