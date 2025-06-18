@@ -9,6 +9,9 @@ use App\Http\Controllers\PemeriksaanController;
 use App\Http\Controllers\StatusHistoryController;
 use App\Http\Controllers\Api\EResepController;
 use App\Http\Controllers\Api\DetailEResepController;
+use App\Http\Controllers\Api\DokterController;
+use App\Http\Controllers\Api\PerawatController;
+use App\Http\Controllers\Api\PoliController;
 
 Route::get('/jadwal-dokter', [JadwalController::class, 'jadwalDokter']);
 Route::get('/jadwal', [JadwalController::class, 'index']);
@@ -21,6 +24,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::apiResource('e-resep', EResepController::class);
 Route::apiResource('e-resepdetail', DetailEResepController::class);
+Route::apiResource('dokter', DokterController::class);
+Route::apiResource('perawat', PerawatController::class);
+Route::apiResource('poli', PoliController::class);
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     // Test routes to check data
