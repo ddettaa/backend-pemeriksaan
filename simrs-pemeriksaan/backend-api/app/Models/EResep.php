@@ -14,6 +14,6 @@ class Eresep extends Model
     public $timestamps = false;
     public function details()
     {
-        return $this->hasMany(EresepDetail::class, 'id_resep', 'id_resep');
+        return $this->hasMany(EResepDetail::class, 'id_resep', 'id_resep');
     }
 }

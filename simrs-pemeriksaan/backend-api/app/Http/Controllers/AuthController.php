@@ -13,6 +13,10 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
+/**
+ * @hideFromApiDocs
+ * DEBUG: Jangan tampilkan ini
+ */
     public function login(Request $request)
     {
         $validator = Validator::make($request->all(), [

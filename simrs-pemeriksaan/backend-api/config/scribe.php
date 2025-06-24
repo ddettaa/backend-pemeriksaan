@@ -9,7 +9,7 @@ use function Knuckles\Scribe\Config\{removeStrategies, configureStrategy};
 
 return [
     // The HTML <title> for the generated documentation.
-    'title' => config('app.name').' API Documentation',
+    'title' => 'API PEMERIKSAAN',
 
     // A short description of your API. Will be included in the docs webpage, Postman collection and OpenAPI spec.
     'description' => '',
@@ -36,7 +36,13 @@ return [
 
             // Exclude these routes even if they matched the rules above.
             'exclude' => [
-                // 'GET /health', 'admin.*'
+                    'api/login',
+                    'api/logout',
+                    'api/test-*',
+                    'api/status/*',
+                    'api/user',
+                    'api/status'
+
             ],
         ],
     ],

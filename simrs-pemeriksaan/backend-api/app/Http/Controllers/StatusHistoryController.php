@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Log;
 
 class StatusHistoryController extends Controller
 {
+/**
+ * @hideFromApiDocs
+ * DEBUG: Jangan tampilkan ini
+ */
     // Mendapatkan status terkini pasien
     public function getCurrentStatus($noReg)
     {

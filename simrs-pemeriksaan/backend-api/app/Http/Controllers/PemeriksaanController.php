@@ -4,37 +4,83 @@ namespace App\Http\Controllers;
 
 use App\Models\Pemeriksaan;
 use App\Models\Perawat;
-use App\Models\Pasien;
 use App\Models\StatusHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class PemeriksaanController extends Controller
 {
+    public function index()
+    {
+        try {
+            Log::info('Fetching all examinations');
+
+            // 1. Ambil data dari API eksternal
+            $apiResp = Http::get('https://ti054a01.agussbn.my.id/api/pendaftaran');
+            if (!$apiResp->successful()) {
+                Log::warning('API pendaftaran gagal');
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Gagal mengambil daftar pasien dari API'
+                ], 500);
+            }
+
+            $pasienList = $apiResp->json('data');
+            if (!is_array($pasienList)) {
+                Log::error('Format data API tidak sesuai (bukan array)');
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Format data dari API tidak valid'
+                ], 500);
+            }
+
+            $pemeriksaanList = DB::table('pemeriksaan')->get()->keyBy('no_registrasi');
+
+            $combined = [];
+            foreach ($pasienList as $pasien) {
+                $no = $pasien['no_registrasi'] ?? null;
+                $combined[] = [
+                    'pasien' => $pasien,
+                    'pemeriksaan' => $pemeriksaanList->has($no) ? $pemeriksaanList->get($no) : null
+                ];
+            }
+
+            return response()->json([
+                'status' => 'success',
+                'data' => $combined
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching all examinations: ' . $e->getMessage());
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Terjadi kesalahan saat mengambil daftar pemeriksaan'
+            ], 500);
+        }
+    }
+
     public function show($no_registrasi)
     {
         try {
-            Log::info('Fetching examination data for registration number:', ['no_registrasi' => $no_registrasi]);
-            
-            // Check if patient exists
-            $pasien = Pasien::where('no_reg', $no_registrasi)->first();
-            Log::info('Patient data:', ['exists' => !is_null($pasien), 'data' => $pasien]);
-            
-            // Get raw pemeriksaan data
-            $rawPemeriksaan = DB::table('pemeriksaan')->where('no_registrasi', $no_registrasi)->first();
-            Log::info('Raw pemeriksaan data:', ['exists' => !is_null($rawPemeriksaan), 'data' => $rawPemeriksaan]);
-            
-            $pemeriksaan = Pemeriksaan::with('pasien')
-                ->where('no_registrasi', $no_registrasi)
-                ->first();
+            Log::info('Fetching examination for: ' . $no_registrasi);
 
-            Log::info('Query result with relation:', ['pemeriksaan' => $pemeriksaan]);
+            $apiResp = Http::get("https://ti054a01.agussbn.my.id/api/pendaftaran/{$no_registrasi}");
+            if (!$apiResp->successful()) {
+                Log::warning('API pendaftaran gagal atau data tidak ditemukan', ['no_registrasi' => $no_registrasi]);
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Data pasien tidak ditemukan di API'
+                ], 404);
+            }
 
+            $pasienData = collect($apiResp->json('data'))->first();
+
+            $pemeriksaan = DB::table('pemeriksaan')->where('no_registrasi', $no_registrasi)->first();
             if (!$pemeriksaan) {
-                Log::warning('No examination data found for registration number:', ['no_registrasi' => $no_registrasi]);
+                Log::warning('Data pemeriksaan tidak ditemukan', ['no_registrasi' => $no_registrasi]);
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Data pemeriksaan tidak ditemukan'
@@ -43,17 +89,16 @@ class PemeriksaanController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'data' => $pemeriksaan
+                'data' => [
+                    'pasien' => $pasienData,
+                    'pemeriksaan' => $pemeriksaan
+                ]
             ]);
-
         } catch (\Exception $e) {
-            Log::error('Error getting examination data: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
-            
+            Log::error('Error getting examination: ' . $e->getMessage());
             return response()->json([
                 'status' => 'error',
-                'message' => 'Terjadi kesalahan saat mengambil data pemeriksaan',
-                'error' => $e->getMessage()
+                'message' => 'Terjadi kesalahan saat mengambil data pemeriksaan'
             ], 500);
         }
     }
@@ -62,46 +107,17 @@ class PemeriksaanController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'no_registrasi' => 'required|integer|exists:pasien,no_reg',
-                'id_perawat' => 'required|exists:perawat,id_perawat',
-                'id_dokter' => 'required|exists:dokter,id_dokter',
-                'rm' => 'nullable|integer',
-                'suhu' => 'required|integer|between:350,450',
-                'tensi' => [
-                    'required',
-                    'string',
-                    'max:10',
-                    'regex:/^\d+\/\d+$/'
-                ],
-                'tinggi_badan' => 'required|integer|between:30,300',
-                'berat_badan' => 'required|integer|between:1,500',
-                'keluhan' => 'required|string',
-                'diagnosa' => 'nullable|string|max:50',
-                'tindakan' => 'nullable|string|max:50'
-            ], [
-                'no_registrasi.required' => 'Nomor registrasi wajib diisi',
-                'no_registrasi.integer' => 'Nomor registrasi harus berupa angka',
-                'no_registrasi.exists' => 'Nomor registrasi tidak ditemukan di data pasien',
-                'id_perawat.required' => 'ID perawat wajib diisi',
-                'id_perawat.exists' => 'ID perawat tidak valid',
-                'id_dokter.required' => 'ID dokter wajib diisi',
-                'id_dokter.exists' => 'ID dokter tidak valid',
-                'rm.integer' => 'RM harus berupa angka',
-                'suhu.required' => 'Suhu wajib diisi',
-                'suhu.integer' => 'Suhu harus berupa angka',
-                'suhu.between' => 'Suhu harus antara 35-45°C',
-                'tensi.required' => 'Tensi wajib diisi',
-                'tensi.max' => 'Tensi maksimal 10 karakter',
-                'tensi.regex' => 'Format tensi tidak valid (contoh: 120/80)',
-                'tinggi_badan.required' => 'Tinggi badan wajib diisi',
-                'tinggi_badan.integer' => 'Tinggi badan harus berupa angka',
-                'tinggi_badan.between' => 'Tinggi badan harus antara 30-300 cm',
-                'berat_badan.required' => 'Berat badan wajib diisi',
-                'berat_badan.integer' => 'Berat badan harus berupa angka',
-                'berat_badan.between' => 'Berat badan harus antara 1-500 kg',
-                'keluhan.required' => 'Keluhan wajib diisi',
-                'diagnosa.max' => 'Diagnosa maksimal 50 karakter',
-                'tindakan.max' => 'Tindakan maksimal 50 karakter'
+                'no_registrasi' => 'required|integer',
+                'id_perawat'    => 'required|exists:perawat,id_perawat',
+                'id_dokter'     => 'required|exists:dokter,id_dokter',
+                'rm'            => 'nullable|integer',
+                'suhu'          => 'required|integer|between:350,450',
+                'tensi'         => ['required', 'string', 'regex:/^\d+\/\d+$/'],
+                'tinggi_badan'  => 'required|integer|between:30,300',
+                'berat_badan'   => 'required|integer|between:1,500',
+                'keluhan'       => 'required|string',
+                'diagnosa'      => 'nullable|string|max:50',
+                'tindakan'      => 'nullable|string|max:50'
             ]);
 
             if ($validator->fails()) {
@@ -112,40 +128,48 @@ class PemeriksaanController extends Controller
                 ], 422);
             }
 
-            // Pastikan id_perawat sesuai dengan user yang login
+            // PERBAIKAN: Cek otentikasi user dengan penanganan yang lebih baik
             $user = Auth::user();
-            $perawat = Perawat::where('id_user', $user->id_user)->first();
             
-            if (!$perawat || $perawat->id_perawat != $request->id_perawat) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'ID perawat tidak sesuai dengan user yang login'
-                ], 403);
+            // Jika user tidak ditemukan, coba ambil perawat berdasarkan id_perawat dari request
+            if (!$user) {
+                Log::warning('User tidak ditemukan, menggunakan id_perawat dari request', ['id_perawat' => $request->id_perawat]);
+                $perawat = Perawat::where('id_perawat', $request->id_perawat)->first();
+                
+                if (!$perawat) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'ID perawat tidak ditemukan.'
+                    ], 403);
+                }
+            } else {
+                // Jika user ditemukan, cek apakah user adalah perawat
+                $perawat = Perawat::where('id_user', $user->id)->first();
+                
+                if (!$perawat) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'User yang login bukan perawat atau tidak terdaftar di tabel perawat.'
+                    ], 403);
+                }
+
+                // Validasi bahwa id_perawat dari request sesuai dengan user yang login
+                if ($perawat->id_perawat != $request->id_perawat) {
+                    return response()->json([
+                        'status' => 'error',
+                        'message' => 'ID perawat dari token tidak sesuai dengan ID perawat di request.'
+                    ], 403);
+                }
             }
 
-            // Konversi data sesuai format database
             $data = $request->only([
-                'no_registrasi',
-                'id_dokter',
-                'id_perawat',
-                'rm',
-                'suhu',
-                'tensi',
-                'tinggi_badan',
-                'berat_badan',
-                'keluhan',
-                'diagnosa',
-                'tindakan'
+                'no_registrasi','id_dokter','id_perawat','rm',
+                'suhu','tensi','tinggi_badan','berat_badan',
+                'keluhan','diagnosa','tindakan'
             ]);
 
-            Log::info('Data yang akan disimpan:', $data);
-
-            // Gunakan transaction untuk memastikan konsistensi data
-            $result = DB::transaction(function () use ($data, $perawat, $request) {
-                // Simpan data pemeriksaan
-                $pemeriksaan = Pemeriksaan::create($data);
-
-                // Tambah history status
+            $pemeriksaan = DB::transaction(function () use ($data, $perawat, $request) {
+                $record = Pemeriksaan::create($data);
                 StatusHistory::addStatus(
                     $request->no_registrasi,
                     'Diperiksa',
@@ -153,23 +177,19 @@ class PemeriksaanController extends Controller
                     $perawat->id_perawat,
                     'Status diubah melalui pemeriksaan'
                 );
-
-                return $pemeriksaan;
+                return $record;
             });
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Data pemeriksaan berhasil disimpan',
-                'data' => $result
+                'message' => 'Data berhasil disimpan',
+                'data' => $pemeriksaan
             ], 201);
-
         } catch (\Exception $e) {
             Log::error('Pemeriksaan save error: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
-            
             return response()->json([
                 'status' => 'error',
-                'message' => 'Terjadi kesalahan saat menyimpan data pemeriksaan',
+                'message' => 'Terjadi kesalahan saat menyimpan',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -178,24 +198,12 @@ class PemeriksaanController extends Controller
     public function updateDiagnosa(Request $request, $no_registrasi)
     {
         try {
-            // Set encoding for logging
-            mb_internal_encoding('UTF-8');
-            
-            Log::info('Starting diagnosa update for no_registrasi: ' . $no_registrasi);
-            Log::info('Request data: ' . json_encode($request->all(), JSON_UNESCAPED_UNICODE));
-
             $validator = Validator::make($request->all(), [
                 'diagnosa' => 'required|string|max:50',
                 'tindakan' => 'required|string|max:50'
-            ], [
-                'diagnosa.required' => 'Diagnosa wajib diisi',
-                'diagnosa.max' => 'Diagnosa maksimal 50 karakter',
-                'tindakan.required' => 'Tindakan wajib diisi',
-                'tindakan.max' => 'Tindakan maksimal 50 karakter'
             ]);
 
             if ($validator->fails()) {
-                Log::warning('Validation failed: ' . json_encode($validator->errors()->toArray(), JSON_UNESCAPED_UNICODE));
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Validasi gagal',
@@ -203,52 +211,27 @@ class PemeriksaanController extends Controller
                 ], 422);
             }
 
-            // Find and update the pemeriksaan record
             $pemeriksaan = Pemeriksaan::where('no_registrasi', $no_registrasi)->first();
-            Log::info('Found pemeriksaan record: ' . ($pemeriksaan ? 'yes' : 'no'));
-            
             if (!$pemeriksaan) {
-                Log::warning('Pemeriksaan not found for no_registrasi: ' . $no_registrasi);
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Data pemeriksaan tidak ditemukan'
                 ], 404);
             }
 
-            // Log current values before update
-            Log::info('Current pemeriksaan data: ' . json_encode($pemeriksaan->toArray(), JSON_UNESCAPED_UNICODE));
+            $rm = intval(now()->format('ymd') . rand(1000, 9999));
+            DB::beginTransaction();
+            $pemeriksaan->update([
+                'diagnosa' => $request->diagnosa,
+                'tindakan' => $request->tindakan,
+                'rm' => $rm
+            ]);
 
-            // Generate RM number using a shorter timestamp format
-            $timestamp = now()->format('ymd');
-            $random = rand(1000, 9999);
-            $rm = intval($timestamp . $random);
-            Log::info('Generated RM number: ' . $rm);
-
-            try {
-                DB::beginTransaction();
-
-                // Update only diagnosa, tindakan, and rm
-                $pemeriksaan->diagnosa = $request->diagnosa;
-                $pemeriksaan->tindakan = $request->tindakan;
-                $pemeriksaan->rm = $rm;
-
-                // Log values that will be saved
-                Log::info('Values to be saved: ' . json_encode([
-                    'diagnosa' => $request->diagnosa,
-                    'tindakan' => $request->tindakan,
-                    'rm' => $rm
-                ], JSON_UNESCAPED_UNICODE));
-
-                $pemeriksaan->save();
-                Log::info('Pemeriksaan record updated successfully');
-
-                // Get user data for status update
-                $user = Auth::user();
-                $dokter = \App\Models\Dokter::where('id_user', $user->id_user)->first();
-                Log::info('Found dokter: ' . ($dokter ? 'yes' : 'no'));
-
+            // PERBAIKAN: Cek otentikasi dengan penanganan yang lebih baik
+            $user = Auth::user();
+            if ($user) {
+                $dokter = \App\Models\Dokter::where('id_user', $user->id)->first();
                 if ($dokter) {
-                    // Update status to "Selesai"
                     StatusHistory::addStatus(
                         $no_registrasi,
                         'Selesai',
@@ -256,34 +239,22 @@ class PemeriksaanController extends Controller
                         $dokter->id_dokter,
                         'Diagnosa selesai'
                     );
-                    Log::info('Status history updated');
-                } else {
-                    Log::warning('Dokter not found for user_id: ' . $user->id_user);
                 }
-
-                DB::commit();
-
-                return response()->json([
-                    'status' => 'success',
-                    'message' => 'Diagnosa berhasil disimpan',
-                    'data' => $pemeriksaan
-                ]);
-
-            } catch (\Exception $e) {
-                DB::rollBack();
-                Log::error('Error in transaction: ' . $e->getMessage());
-                Log::error('Stack trace: ' . $e->getTraceAsString());
-                throw $e;
+            } else {
+                Log::warning('User tidak ditemukan saat update diagnosa', ['no_registrasi' => $no_registrasi]);
+                // Jika user tidak ditemukan, tetap lanjutkan tanpa status history
             }
-
-        } catch (\Exception $e) {
-            Log::error('Error updating diagnosis: ' . $e->getMessage());
-            Log::error('Stack trace: ' . $e->getTraceAsString());
-            Log::error('Additional context: ' . json_encode([
-                'no_registrasi' => $no_registrasi,
-                'request_data' => $request->all()
-            ], JSON_UNESCAPED_UNICODE));
             
+            DB::commit();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Diagnosa berhasil disimpan',
+                'data' => $pemeriksaan
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error updating diagnosis: ' . $e->getMessage());
             return response()->json([
                 'status' => 'error',
                 'message' => 'Terjadi kesalahan saat menyimpan diagnosa',

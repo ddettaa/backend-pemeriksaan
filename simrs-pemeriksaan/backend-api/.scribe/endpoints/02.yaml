@@ -1,24 +1,35 @@
-name: EResep
+name: 'Detail E-Resep'
 description: ''
 endpoints:
   -
     httpMethods:
       - GET
-    uri: api/e-resep
+    uri: api/e-resepdetail
     metadata:
-      groupName: EResep
+      groupName: 'Detail E-Resep'
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Ambil daftar resep beserta detailnya.'
+      title: 'Tampilkan semua detail e-resep tertentu.'
       description: ''
       authenticated: false
       custom: []
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
+    urlParameters:
+      e_resep:
+        name: e_resep
+        description: 'ID dari e-resep.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      e_resep: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -29,17 +40,12 @@ endpoints:
         status: 200
         content: |-
           [
-              {
-                  "id": 1,
-                  "no_registrasi": "12345",
-                  "details": [
-                      {
-                          "id_obat": 1,
-                          "jumlah": 2,
-                          "aturan_pakai": "3x sehari"
-                      }
-                  ]
-              }
+            {
+              "id": 1,
+              "id_obat": 5,
+              "jumlah": 2,
+              "aturan_pakai": "3x1 sesudah makan"
+            }
           ]
         headers: []
         description: ''
@@ -53,45 +59,79 @@ endpoints:
   -
     httpMethods:
       - POST
-    uri: api/e-resep
+    uri: api/e-resepdetail
     metadata:
-      groupName: EResep
+      groupName: 'Detail E-Resep'
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Tambah resep baru.'
+      title: 'Simpan detail resep baru untuk e-resep tertentu.'
       description: ''
       authenticated: false
       custom: []
     headers:
       Content-Type: application/json
       Accept: application/json
-    urlParameters: []
-    cleanUrlParameters: []
+    urlParameters:
+      e_resep:
+        name: e_resep
+        description: 'ID dari e-resep.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+    cleanUrlParameters:
+      e_resep: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      no_registrasi:
-        name: no_registrasi
-        description: 'Nomor registrasi pasien.'
+      id_obat:
+        name: id_obat
+        description: 'ID obat yang diresepkan.'
         required: true
-        example: '12345'
+        example: 5
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      jumlah:
+        name: jumlah
+        description: 'Jumlah obat.'
+        required: true
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      aturan_pakai:
+        name: aturan_pakai
+        description: 'Aturan penggunaan obat.'
+        required: true
+        example: '3x1 sesudah makan'
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
     cleanBodyParameters:
-      no_registrasi: '12345'
+      id_obat: 5
+      jumlah: 2
+      aturan_pakai: '3x1 sesudah makan'
     fileParameters: []
     responses:
       -
         status: 201
         content: |-
           {
-              "id": 1,
-              "no_registrasi": "12345",
-              "details": []
+            "id": 10,
+            "id_obat": 5,
+            "jumlah": 2,
+            "aturan_pakai": "3x1 sesudah makan"
           }
         headers: []
         description: ''
@@ -105,13 +145,13 @@ endpoints:
   -
     httpMethods:
       - GET
-    uri: 'api/e-resep/{id}'
+    uri: 'api/e-resepdetail/{id}'
     metadata:
-      groupName: EResep
+      groupName: 'Detail E-Resep'
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Ambil satu resep beserta detailnya.'
+      title: 'Tampilkan detail resep tertentu.'
       description: ''
       authenticated: false
       custom: []
@@ -121,7 +161,7 @@ endpoints:
     urlParameters:
       id:
         name: id
-        description: 'The ID of the e resep.'
+        description: 'The ID of the e resepdetail.'
         required: true
         example: 16
         type: integer
@@ -129,8 +169,30 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         custom: []
+      e_resep:
+        name: e_resep
+        description: 'ID dari e-resep.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      detail_e_resep:
+        name: detail_e_resep
+        description: 'ID dari detail resep.'
+        required: true
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
     cleanUrlParameters:
       id: 16
+      e_resep: 1
+      detail_e_resep: 10
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -141,15 +203,10 @@ endpoints:
         status: 200
         content: |-
           {
-              "id": 1,
-              "no_registrasi": "12345",
-              "details": [
-                  {
-                      "id_obat": 1,
-                      "jumlah": 2,
-                      "aturan_pakai": "3x sehari"
-                  }
-              ]
+            "id": 10,
+            "id_obat": 5,
+            "jumlah": 2,
+            "aturan_pakai": "3x1 sesudah makan"
           }
         headers: []
         description: ''
@@ -164,13 +221,13 @@ endpoints:
     httpMethods:
       - PUT
       - PATCH
-    uri: 'api/e-resep/{id}'
+    uri: 'api/e-resepdetail/{id}'
     metadata:
-      groupName: EResep
+      groupName: 'Detail E-Resep'
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Update data resep.'
+      title: 'Perbarui detail resep.'
       description: ''
       authenticated: false
       custom: []
@@ -180,7 +237,7 @@ endpoints:
     urlParameters:
       id:
         name: id
-        description: 'The ID of the e resep.'
+        description: 'The ID of the e resepdetail.'
         required: true
         example: 16
         type: integer
@@ -188,32 +245,77 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         custom: []
+      e_resep:
+        name: e_resep
+        description: 'ID dari e-resep.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      detail_e_resep:
+        name: detail_e_resep
+        description: 'ID dari detail resep.'
+        required: true
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
     cleanUrlParameters:
       id: 16
+      e_resep: 1
+      detail_e_resep: 10
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      no_registrasi:
-        name: no_registrasi
-        description: 'Nomor registrasi pasien.'
+      id_obat:
+        name: id_obat
+        description: 'optional ID obat.'
         required: false
-        example: '12345'
+        example: 6
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      jumlah:
+        name: jumlah
+        description: 'optional Jumlah obat.'
+        required: false
+        example: 3
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      aturan_pakai:
+        name: aturan_pakai
+        description: 'optional Aturan pakai.'
+        required: false
+        example: '2x1 sebelum makan'
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
     cleanBodyParameters:
-      no_registrasi: '12345'
+      id_obat: 6
+      jumlah: 3
+      aturan_pakai: '2x1 sebelum makan'
     fileParameters: []
     responses:
       -
         status: 200
         content: |-
           {
-              "id": 1,
-              "no_registrasi": "12345",
-              "details": []
+            "id": 10,
+            "id_obat": 6,
+            "jumlah": 3,
+            "aturan_pakai": "2x1 sebelum makan"
           }
         headers: []
         description: ''
@@ -227,13 +329,13 @@ endpoints:
   -
     httpMethods:
       - DELETE
-    uri: 'api/e-resep/{id}'
+    uri: 'api/e-resepdetail/{id}'
     metadata:
-      groupName: EResep
+      groupName: 'Detail E-Resep'
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Hapus resep tertentu.'
+      title: 'Hapus detail resep.'
       description: ''
       authenticated: false
       custom: []
@@ -243,7 +345,7 @@ endpoints:
     urlParameters:
       id:
         name: id
-        description: 'The ID of the e resep.'
+        description: 'The ID of the e resepdetail.'
         required: true
         example: 16
         type: integer
@@ -251,8 +353,30 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         custom: []
+      e_resep:
+        name: e_resep
+        description: 'ID dari e-resep.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      detail_e_resep:
+        name: detail_e_resep
+        description: 'ID dari detail resep.'
+        required: true
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
     cleanUrlParameters:
       id: 16
+      e_resep: 1
+      detail_e_resep: 10
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -261,7 +385,10 @@ endpoints:
     responses:
       -
         status: 204
-        content: '{}'
+        content: |-
+          {
+            "message": "Berhasil dihapus"
+          }
         headers: []
         description: ''
         custom: []
