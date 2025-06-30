@@ -125,7 +125,7 @@ endpoints:
         name: id
         description: 'The ID of the e resep.'
         required: true
-        example: 16
+        example: 2
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -142,7 +142,7 @@ endpoints:
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 16
+      id: 2
       e_resep: 1
     queryParameters: []
     cleanQueryParameters: []
@@ -195,7 +195,7 @@ endpoints:
         name: id
         description: 'The ID of the e resep.'
         required: true
-        example: 16
+        example: 2
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -212,7 +212,7 @@ endpoints:
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 16
+      id: 2
       e_resep: 1
     queryParameters: []
     cleanQueryParameters: []
@@ -269,7 +269,7 @@ endpoints:
         name: id
         description: 'The ID of the e resep.'
         required: true
-        example: 16
+        example: 2
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -286,7 +286,7 @@ endpoints:
         nullable: false
         custom: []
     cleanUrlParameters:
-      id: 16
+      id: 2
       e_resep: 1
     queryParameters: []
     cleanQueryParameters: []

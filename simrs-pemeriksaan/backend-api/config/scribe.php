@@ -41,6 +41,12 @@ return [
                     'api/test-*',
                     'api/status/*',
                     'api/user',
+                    'api/perawat/*',
+                    'api/dokter/*',
+                    'api/dokter',
+                    'api/perawat',
+                    'api/poli',
+                    'api/poli/*',
                     'api/status'
 
             ],

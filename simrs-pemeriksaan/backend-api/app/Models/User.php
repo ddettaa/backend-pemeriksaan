@@ -12,7 +12,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable, HasApiTokens;
 
     // Pakai koneksi database simrs (DB1)
-    protected $connection = 'simrs';
+    // protected $connection = 'simrs';
 
     protected $table = 'users';
     protected $primaryKey = 'id_user';

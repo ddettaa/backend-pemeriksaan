@@ -8,32 +8,32 @@ return [
 
     'connections' => [
 
-        'simrs' => [
-            'driver' => 'mysql',
-            'host' => env('DB1_HOST', '127.0.0.1'),
-            'port' => env('DB1_PORT', '3306'),
-            'database' => env('DB1_DATABASE', 'simrs'),
-            'username' => env('DB1_USERNAME', 'root'),
-            'password' => env('DB1_PASSWORD', ''),
-            'unix_socket' => env('DB_SOCKET', ''),
-            'charset' => env('DB_CHARSET', 'utf8mb4'),
-            'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => true,
-            'engine' => null,
-            'options' => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ],
+        // 'simrs' => [
+        //     'driver' => 'mysql',
+        //     'host' => env('DB1_HOST', '127.0.0.1'),
+        //     'port' => env('DB1_PORT', '3306'),
+        //     'database' => env('DB1_DATABASE', 'simrs'),
+        //     'username' => env('DB1_USERNAME', 'kel2auth'), // FIXED
+        //     'password' => env('DB1_PASSWORD', 'kel2pass'), // FIXED
+        //     'unix_socket' => env('DB_SOCKET', ''),
+        //     'charset' => env('DB_CHARSET', 'utf8mb4'),
+        //     'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
+        //     'prefix' => '',
+        //     'prefix_indexes' => true,
+        //     'strict' => true,
+        //     'engine' => null,
+        //     'options' => extension_loaded('pdo_mysql') ? array_filter([
+        //         PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+        //     ]) : [],
+        // ],
 
         'simrs_pemeriksaan' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'simrs_pemeriksaan'),
-            'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', ''),
+            'username' => env('DB_USERNAME', 'kel2'), // FIXED
+            'password' => env('DB_PASSWORD', 'Password'), // FIXED
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
@@ -46,7 +46,6 @@ return [
             ]) : [],
         ],
 
-        // Koneksi lain (sqlite, pgsql, sqlsrv) biarkan default
     ],
 
     'migrations' => [

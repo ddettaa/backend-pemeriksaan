@@ -29,7 +29,7 @@ Route::get('/user', function (Request $request) {
 
 // Auth routes (public)
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/logout', [AuthController::class, 'logout']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 // Resource routes (public)
 Route::apiResource('e-resep', EResepController::class);
@@ -39,23 +39,24 @@ Route::apiResource('perawat', PerawatController::class);
 Route::apiResource('poli', PoliController::class);
 
 // -------------------
-// PROTECTED ROUTES (with authentication)
+// PROTECTED ROUTES (REQUIRES LOGIN)
 // -------------------
 
-// Pemeriksaan routes (protected with auth middleware)
-Route::middleware(['auth:sanctum'])->group(function () {
+    // Pemeriksaan routes (PROTECTED)
+    Route::middleware('auth:sanctum')->group(function () {
+    // Pemeriksaan routes (PROTECTED)
     Route::get('/pemeriksaan', [PemeriksaanController::class, 'index']);
     Route::post('/pemeriksaan', [PemeriksaanController::class, 'store']);
     Route::get('/pemeriksaan/{no_registrasi}', [PemeriksaanController::class, 'show']);
     Route::put('/pemeriksaan/{no_registrasi}/diagnosa', [PemeriksaanController::class, 'updateDiagnosa']);
-});
+    Route::post('/e-resep/{e_resep}/detail', [DetailEResepController::class, 'store']);
 
-// Status history routes (protected with auth middleware)
-Route::middleware(['auth:sanctum'])->group(function () {
+    // Status history routes (PROTECTED)
     Route::get('/status/{noReg}/current', [StatusHistoryController::class, 'getCurrentStatus']);
     Route::get('/status/{noReg}/history', [StatusHistoryController::class, 'getStatusHistory']);
     Route::post('/status', [StatusHistoryController::class, 'addStatus']);
 });
+
 
 // -------------------
 // TEST ROUTES (public for debugging)

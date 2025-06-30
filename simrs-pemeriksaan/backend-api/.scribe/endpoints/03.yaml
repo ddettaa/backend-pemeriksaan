@@ -1,16 +1,16 @@
-name: Dokter
+name: Pemeriksaan
 description: ''
 endpoints:
   -
     httpMethods:
       - GET
-    uri: api/dokter
+    uri: api/pemeriksaan
     metadata:
-      groupName: Dokter
+      groupName: Pemeriksaan
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Ambil daftar semua dokter.'
+      title: 'Ambil daftar seluruh pemeriksaan beserta data pasien dari API eksternal.'
       description: ''
       authenticated: false
       custom: []
@@ -28,15 +28,31 @@ endpoints:
       -
         status: 200
         content: |-
-          [
-            {
-              "id_dokter": 1,
-              "id_user": 1,
-              "nama_dokter": "Dr. Smith",
-              "no_hp_dokter": "08123456789",
-              "spesialis": "Umum"
-            }
-          ]
+          {
+            "status": "success",
+            "data": [
+              {
+                "pasien": {
+                  "no_registrasi": 1,
+                  "rm": 12345,
+                  // ...data pasien lain...
+                },
+                "pemeriksaan": {
+                  "no_registrasi": 1,
+                  "rm": 12345,
+                  "suhu": 370,
+                  "tensi": "120/80",
+                  "tinggi_badan": 170,
+                  "berat_badan": 65,
+                  "keluhan": "Pusing",
+                  "diagnosa": "Flu",
+                  "tindakan": "Obat",
+                  "id_perawat": 1,
+                  "id_dokter": 2
+                }
+              }
+            ]
+          }
         headers: []
         description: ''
         custom: []
@@ -49,13 +65,13 @@ endpoints:
   -
     httpMethods:
       - POST
-    uri: api/dokter
+    uri: api/pemeriksaan
     metadata:
-      groupName: Dokter
+      groupName: Pemeriksaan
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Tambah dokter baru.'
+      title: 'Simpan data pemeriksaan baru atau update jika sudah ada.'
       description: ''
       authenticated: false
       custom: []
@@ -67,9 +83,9 @@ endpoints:
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      id_user:
-        name: id_user
-        description: 'ID user.'
+      no_registrasi:
+        name: no_registrasi
+        description: 'Nomor registrasi pasien.'
         required: true
         example: 1
         type: integer
@@ -77,52 +93,130 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         custom: []
-      nama_dokter:
-        name: nama_dokter
-        description: 'Nama lengkap dokter.'
+      rm:
+        name: rm
+        description: 'Nomor rekam medis.'
+        required: false
+        example: 12345
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      suhu:
+        name: suhu
+        description: 'Suhu tubuh (350-450).'
         required: true
-        example: 'Dr. Smith'
+        example: 370
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      tensi:
+        name: tensi
+        description: 'Tekanan darah (format: 120/80).'
+        required: true
+        example: 120/80
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-      no_hp_dokter:
-        name: no_hp_dokter
-        description: 'Nomor HP dokter.'
+      tinggi_badan:
+        name: tinggi_badan
+        description: 'Tinggi badan (30-300 cm).'
         required: true
-        example: '08123456789'
+        example: 170
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      berat_badan:
+        name: berat_badan
+        description: 'Berat badan (1-500 kg).'
+        required: true
+        example: 65
+        type: integer
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      keluhan:
+        name: keluhan
+        description: 'Keluhan pasien.'
+        required: true
+        example: Pusing
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-      spesialis:
-        name: spesialis
-        description: 'Spesialisasi dokter.'
-        required: true
-        example: Umum
+      diagnosa:
+        name: diagnosa
+        description: Diagnosa.
+        required: false
+        example: Flu
+        type: string
+        enumValues: []
+        exampleWasSpecified: true
+        nullable: false
+        custom: []
+      tindakan:
+        name: tindakan
+        description: Tindakan.
+        required: false
+        example: Obat
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
     cleanBodyParameters:
-      id_user: 1
-      nama_dokter: 'Dr. Smith'
-      no_hp_dokter: '08123456789'
-      spesialis: Umum
+      no_registrasi: 1
+      rm: 12345
+      suhu: 370
+      tensi: 120/80
+      tinggi_badan: 170
+      berat_badan: 65
+      keluhan: Pusing
+      diagnosa: Flu
+      tindakan: Obat
     fileParameters: []
     responses:
       -
         status: 201
         content: |-
           {
-            "id_dokter": 2,
-            "id_user": 1,
-            "nama_dokter": "Dr. Smith",
-            "no_hp_dokter": "08123456789",
-            "spesialis": "Umum"
+            "status": "success",
+            "message": "Data berhasil disimpan",
+            "data": {
+              "no_registrasi": 1,
+              "rm": 12345,
+              "suhu": 370,
+              "tensi": "120/80",
+              "tinggi_badan": 170,
+              "berat_badan": 65,
+              "keluhan": "Pusing",
+              "diagnosa": "Flu",
+              "tindakan": "Obat",
+              "id_perawat": 1,
+              "id_dokter": null
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "status": "error",
+            "message": "Validasi gagal",
+            "errors": {
+              "suhu": ["The suhu must be between 350 and 450."]
+            }
           }
         headers: []
         description: ''
@@ -136,13 +230,13 @@ endpoints:
   -
     httpMethods:
       - GET
-    uri: 'api/dokter/{id_dokter}'
+    uri: 'api/pemeriksaan/{no_registrasi}'
     metadata:
-      groupName: Dokter
+      groupName: Pemeriksaan
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Lihat detail dokter tertentu.'
+      title: 'Ambil detail pemeriksaan dan data pasien berdasarkan nomor registrasi.'
       description: ''
       authenticated: false
       custom: []
@@ -150,19 +244,9 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      id_dokter:
-        name: id_dokter
-        description: ''
-        required: true
-        example: 102
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      dokter:
-        name: dokter
-        description: 'ID dokter yang ingin ditampilkan.'
+      no_registrasi:
+        name: no_registrasi
+        description: 'Nomor registrasi pasien.'
         required: true
         example: 1
         type: integer
@@ -171,8 +255,7 @@ endpoints:
         nullable: false
         custom: []
     cleanUrlParameters:
-      id_dokter: 102
-      dokter: 1
+      no_registrasi: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters: []
@@ -183,11 +266,38 @@ endpoints:
         status: 200
         content: |-
           {
-            "id_dokter": 1,
-            "id_user": 1,
-            "nama_dokter": "Dr. Smith",
-            "no_hp_dokter": "08123456789",
-            "spesialis": "Umum"
+            "status": "success",
+            "data": {
+              "pasien": {
+                "no_registrasi": 1,
+                "rm": 12345,
+                "jenis_kelamin": "L",
+                // ...data pasien lain...
+              },
+              "pemeriksaan": {
+                "no_registrasi": 1,
+                "rm": 12345,
+                "suhu": 370,
+                "tensi": "120/80",
+                "tinggi_badan": 170,
+                "berat_badan": 65,
+                "keluhan": "Pusing",
+                "diagnosa": "Flu",
+                "tindakan": "Obat",
+                "id_perawat": 1,
+                "id_dokter": 2
+              }
+            }
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 404
+        content: |-
+          {
+            "status": "error",
+            "message": "Data pasien tidak ditemukan di API"
           }
         headers: []
         description: ''
@@ -201,14 +311,13 @@ endpoints:
   -
     httpMethods:
       - PUT
-      - PATCH
-    uri: 'api/dokter/{id_dokter}'
+    uri: 'api/pemeriksaan/{no_registrasi}/diagnosa'
     metadata:
-      groupName: Dokter
+      groupName: Pemeriksaan
       groupDescription: ''
       subgroup: ''
       subgroupDescription: ''
-      title: 'Update data dokter.'
+      title: 'Update diagnosa dan tindakan oleh dokter.'
       description: ''
       authenticated: false
       custom: []
@@ -216,19 +325,9 @@ endpoints:
       Content-Type: application/json
       Accept: application/json
     urlParameters:
-      id_dokter:
-        name: id_dokter
-        description: ''
-        required: true
-        example: 102
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      dokter:
-        name: dokter
-        description: 'ID dokter yang akan diupdate.'
+      no_registrasi:
+        name: no_registrasi
+        description: 'Nomor registrasi pasien.'
         required: true
         example: 1
         type: integer
@@ -237,128 +336,70 @@ endpoints:
         nullable: false
         custom: []
     cleanUrlParameters:
-      id_dokter: 102
-      dokter: 1
+      no_registrasi: 1
     queryParameters: []
     cleanQueryParameters: []
     bodyParameters:
-      id_user:
-        name: id_user
-        description: 'ID user.'
+      diagnosa:
+        name: diagnosa
+        description: Diagnosa.
         required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      nama_dokter:
-        name: nama_dokter
-        description: 'Nama dokter.'
-        required: true
-        example: 'Dr. Smith'
+        example: Flu
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
-      no_hp_dokter:
-        name: no_hp_dokter
-        description: 'Nomor HP dokter.'
+      tindakan:
+        name: tindakan
+        description: Tindakan.
         required: true
-        example: '08123456789'
-        type: string
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-      spesialis:
-        name: spesialis
-        description: 'Spesialisasi dokter.'
-        required: true
-        example: Umum
+        example: Obat
         type: string
         enumValues: []
         exampleWasSpecified: true
         nullable: false
         custom: []
     cleanBodyParameters:
-      id_user: 1
-      nama_dokter: 'Dr. Smith'
-      no_hp_dokter: '08123456789'
-      spesialis: Umum
+      diagnosa: Flu
+      tindakan: Obat
     fileParameters: []
     responses:
       -
         status: 200
         content: |-
           {
-            "id_dokter": 1,
-            "id_user": 1,
-            "nama_dokter": "Dr. Smith",
-            "no_hp_dokter": "08123456789",
-            "spesialis": "Umum"
+            "status": "success",
+            "message": "Diagnosa berhasil disimpan",
+            "data": {
+              "no_registrasi": 1,
+              "diagnosa": "Flu",
+              "tindakan": "Obat",
+              "id_dokter": 2
+            }
           }
         headers: []
         description: ''
         custom: []
-    responseFields: []
-    auth: []
-    controller: null
-    method: null
-    route: null
-    custom: []
-  -
-    httpMethods:
-      - DELETE
-    uri: 'api/dokter/{id_dokter}'
-    metadata:
-      groupName: Dokter
-      groupDescription: ''
-      subgroup: ''
-      subgroupDescription: ''
-      title: 'Hapus dokter tertentu.'
-      description: ''
-      authenticated: false
-      custom: []
-    headers:
-      Content-Type: application/json
-      Accept: application/json
-    urlParameters:
-      id_dokter:
-        name: id_dokter
-        description: ''
-        required: true
-        example: 102
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        custom: []
-      dokter:
-        name: dokter
-        description: 'ID dokter yang akan dihapus.'
-        required: true
-        example: 1
-        type: integer
-        enumValues: []
-        exampleWasSpecified: true
-        nullable: false
-        custom: []
-    cleanUrlParameters:
-      id_dokter: 102
-      dokter: 1
-    queryParameters: []
-    cleanQueryParameters: []
-    bodyParameters: []
-    cleanBodyParameters: []
-    fileParameters: []
-    responses:
       -
-        status: 204
+        status: 404
         content: |-
           {
-            "message": "Dokter berhasil dihapus"
+            "status": "error",
+            "message": "Data pemeriksaan tidak ditemukan"
+          }
+        headers: []
+        description: ''
+        custom: []
+      -
+        status: 422
+        content: |-
+          {
+            "status": "error",
+            "message": "Validasi gagal",
+            "errors": {
+              "diagnosa": ["The diagnosa field is required."]
+            }
           }
         headers: []
         description: ''
